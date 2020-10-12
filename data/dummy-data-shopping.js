@@ -6,15 +6,15 @@ const PRODUCTS = [
     "u1",
     "Basic Red T-Shirt",
     "https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg",
-    "A red t-shirt, perfect for days with non-red weather.",
+    "A red t-shirt, for those of us who crave attention.",
     29.99
   ),
   new Product(
     "p2",
     "u1",
-    "Blue Carpet",
+    "Handmade Blue Rug",
     "https://images.pexels.com/photos/6292/blue-pattern-texture-macro.jpg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-    "Fits your red shirt perfectly. To stand on. Not to wear it.",
+    "Fits your red shirt perfectly -- to stand on.",
     99.99
   ),
   new Product(
@@ -30,7 +30,7 @@ const PRODUCTS = [
     "u3",
     "1984 - Limited Edition",
     "https://images.pexels.com/photos/46274/pexels-photo-46274.jpeg?cs=srgb&dl=blur-blurred-book-pages-46274.jpg&fm=jpg",
-    "What the content is? Why would that matter? It's a limited edition!",
+    "You've read it already? Why would that matter? It's a limited edition!",
     15.99
   ),
   new Product(
@@ -46,7 +46,7 @@ const PRODUCTS = [
     "u1",
     "Pen & Paper",
     "https://cdn.pixabay.com/photo/2015/10/03/02/14/pen-969298_1280.jpg",
-    "Can be used for role-playing (not the kind of role-playing you're thinking about...).",
+    "Can be used for writing -- as in actually writing something down",
     5.49
   )
 ];

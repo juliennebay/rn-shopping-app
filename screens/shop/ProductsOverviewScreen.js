@@ -1,9 +1,11 @@
 import React from "react";
 import { FlatList } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
+import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
 import ProductItem from "../../components/shop/ProductItem";
 import * as cartActions from "../../store/actions/cart-actions";
+import HeaderButton from "../../components/UI/HeaderButton";
 
 const ProductsOverviewScreen = props => {
   //the key "products" in state.products below has to match the key in the rootReducer in App.js
@@ -38,8 +40,21 @@ const ProductsOverviewScreen = props => {
   );
 };
 
-ProductsOverviewScreen.navigationOptions = {
-  headerTitle: "All Products"
+ProductsOverviewScreen.navigationOptions = navData => {
+  return {
+    headerTitle: "All Products",
+    headerRight: (
+      <HeaderButtons HeaderButtonComponent={HeaderButton}>
+        <Item
+          title="Cart"
+          iconName={"ios-cart"}
+          onPress={() => {
+            navData.navigation.navigate({ routeName: "Cart" });
+          }}
+        />
+      </HeaderButtons>
+    )
+  };
 };
 
 export default ProductsOverviewScreen;

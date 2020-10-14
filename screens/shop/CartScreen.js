@@ -1,9 +1,10 @@
 import React from "react";
 import { View, Text, FlatList, StyleSheet, Button } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Colors from "../../constants/Colors";
 
 import CartItem from "../../components/shop/CartItem";
+import * as cartActions from "../../store/actions/cart-actions";
 
 const CartScreen = prop => {
   //the key "cart" below is from App.js's "const rootReducer"
@@ -23,8 +24,9 @@ const CartScreen = prop => {
         sum: state.cart.items[key].sum
       });
     }
-    return transformedCartItems;
+    return transformedCartItems.sort((a, b) => a.productId > b.productId);
   });
+  const dispatch = useDispatch();
 
   //the flatList data used (below) is the array defined above.
   //it needs a keyExtractor because there's no key or ID property in the array
@@ -49,7 +51,10 @@ const CartScreen = prop => {
             quantity={itemData.item.quantity}
             title={itemData.item.productTitle}
             amount={itemData.item.sum}
-            onRemove={() => {}}
+            //the key "productId" below is from line 20 above
+            onRemove={() => {
+              dispatch(cartActions.removeFromCart(itemData.item.productId));
+            }}
           />
         )}
       />

@@ -1,4 +1,4 @@
-import { ADD_TO_CART } from "../actions/cart-actions";
+import { ADD_TO_CART, REMOVE_FROM_CART } from "../actions/cart-actions";
 import CartItem from "../../models/cart-item";
 
 const initialState = {
@@ -24,6 +24,7 @@ export default (state = initialState, action) => {
       let updatedOrNewCartItem;
 
       //need to find out if the item already exists in items (in the cart)
+      //"state" is the initialState object above
       if (state.items[addedProduct.id]) {
         //already have the item in the cart - we need to update the existing one (add quantity)
         updatedOrNewCartItem = new CartItem(
@@ -41,6 +42,30 @@ export default (state = initialState, action) => {
         ...state,
         items: { ...state.items, [addedProduct.id]: updatedOrNewCartItem },
         totalAmount: state.totalAmount + prodPrice
+      };
+    case REMOVE_FROM_CART:
+      //the key (action.pId) below is from store/actions/cart-actions.js
+      const selectedCartItem = state.items[action.pId];
+      const currentQty = selectedCartItem.quantity;
+      let updatedCartItems;
+      //if there are more than 1 in quantity, need to reduce the quantity (instead of deleting the item in the cart)
+      if (currentQty > 1) {
+        const updatedCartItem = new CartItem(
+          selectedCartItem.quantity - 1,
+          selectedCartItem.productPrice,
+          selectedCartItem.productTitle,
+          selectedCartItem.sum - selectedCartItem.productPrice
+        );
+        updatedCartItems = { ...state.items, [action.pId]: updatedCartItem };
+      } else {
+        updatedCartItems = { ...state.items };
+        //delete this item from our COPIED object
+        delete updatedCartItems[action.pId];
+      }
+      return {
+        ...state,
+        items: updatedCartItems,
+        totalAmount: state.totalAmount - selectedCartItem.productPrice
       };
   }
   return state;

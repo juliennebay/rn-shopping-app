@@ -5,6 +5,7 @@ import Colors from "../../constants/Colors";
 
 import CartItem from "../../components/shop/CartItem";
 import * as cartActions from "../../store/actions/cart-actions";
+import * as ordersActions from "../../store/actions/orders-actions";
 
 const CartScreen = prop => {
   //the key "cart" below is from App.js's "const rootReducer"
@@ -41,6 +42,9 @@ const CartScreen = prop => {
           color={Colors.secondary}
           title="Order Now"
           disabled={cartItems.length === 0}
+          onPress={() =>
+            dispatch(ordersActions.addOrder(cartItems, cartTotalAmount))
+          }
         />
       </View>
       <FlatList

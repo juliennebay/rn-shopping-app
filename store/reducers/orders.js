@@ -13,6 +13,7 @@ export default (state = initialState, action) => {
         new Date().toString(),
         action.orderData.items,
         action.orderData.amount,
+        //the date is an object. To make it readable, we have to use a getter in models/order.js
         new Date()
       );
       return {

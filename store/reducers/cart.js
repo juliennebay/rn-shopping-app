@@ -1,5 +1,6 @@
 import { ADD_TO_CART, REMOVE_FROM_CART } from "../actions/cart-actions";
 import { ADD_ORDER } from "../actions/orders-actions";
+import { DELETE_PRODUCT } from "../actions/products-actions";
 import CartItem from "../../models/cart-item";
 
 const initialState = {
@@ -71,6 +72,20 @@ export default (state = initialState, action) => {
     case ADD_ORDER:
       //when you click "add to order" from your cart, it returns the initialState, which resets your cart items
       return initialState;
+    case DELETE_PRODUCT:
+      if (!state.items[action.pId]) {
+        return state;
+      }
+      const updatedItems = { ...state.items };
+      //the "sum" key below is from models/cart-items
+      const itemTotal = state.items[action.pId].sum;
+      //delete this item from our COPIED object
+      delete updatedItems[action.pId];
+      return {
+        ...state,
+        items: updatedItems,
+        totalAmount: state.totalAmount - itemTotal
+      };
   }
   return state;
 };

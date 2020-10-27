@@ -4,6 +4,8 @@ import { Ionicons } from "@expo/vector-icons";
 
 const CartItem = props => {
   return (
+    //props.deletable (below) is set inside screens/shop/CartScreen
+    //on the other hand, it's not set in components/OrderItem (under show details), because there's no trash can icon there
     <View style={styles.cartItem}>
       <View style={styles.itemData}>
         <Text style={styles.quantity}>{props.quantity} </Text>
@@ -11,9 +13,14 @@ const CartItem = props => {
       </View>
       <View style={styles.itemData}>
         <Text style={styles.mainText}>{props.amount.toFixed(2)}</Text>
-        <TouchableOpacity onPress={props.onRemove} style={styles.deleteButton}>
-          <Ionicons name="ios-trash" size={23} color="red" />
-        </TouchableOpacity>
+        {props.deletable && (
+          <TouchableOpacity
+            onPress={props.onRemove}
+            style={styles.deleteButton}
+          >
+            <Ionicons name="ios-trash" size={23} color="red" />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );

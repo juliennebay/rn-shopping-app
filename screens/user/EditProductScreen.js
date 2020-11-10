@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
 import HeaderButton from "../../components/UI/HeaderButton";
+import * as productsActions from "../../store/actions/products-actions";
 
 const EditProductScreen = props => {
   //in screens/user/UserProductsScreen.js, we can see that if the productId is set, then we're in "edit" mode.
@@ -15,6 +16,7 @@ const EditProductScreen = props => {
   const editedProduct = useSelector(state =>
     state.products.userProducts.find(prod => prod.id === prodId)
   );
+  const dispatch = useDispatch();
 
   const [title, setTitle] = useState(editedProduct ? editedProduct.title : "");
   const [imageUrl, setImageUrl] = useState(
@@ -25,10 +27,19 @@ const EditProductScreen = props => {
     editedProduct ? editedProduct.description : ""
   );
 
+  //add product or update
   const submitHandler = useCallback(() => {
-    //add product or update
-    console.log("submitting!");
-  }, []);
+    if (editedProduct) {
+      dispatch(
+        productsActions.updateProduct(prodId, title, description, imageUrl)
+      );
+    } else {
+      dispatch(
+        productsActions.createProduct(title, description, imageUrl, +price)
+      );
+    }
+    props.navigation.goBack();
+  }, [dispatch, prodId, title, description, imageUrl, price]);
 
   useEffect(() => {
     props.navigation.setParams({ submit: submitHandler });
@@ -89,10 +100,8 @@ EditProductScreen.navigationOptions = navData => {
         <Item
           title="Save"
           iconName={"ios-checkmark"}
-          onPress={() => {
-            //i want to submit my form here
-            submitFn;
-          }}
+          //i want to submit my form here
+          onPress={submitFn}
         />
       </HeaderButtons>
     )

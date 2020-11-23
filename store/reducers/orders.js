@@ -10,11 +10,10 @@ export default (state = initialState, action) => {
     case ADD_ORDER:
       //the keys below (action.orderData.itmes) are from ../actions/orders-actions.js
       const newOrder = new Order(
-        new Date().toString(),
+        action.orderData.id,
         action.orderData.items,
         action.orderData.amount,
-        //the date is an object. To make it readable, we have to use a getter in models/order.js
-        new Date()
+        action.orderData.date
       );
       return {
         ...state,

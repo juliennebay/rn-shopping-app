@@ -1,5 +1,12 @@
-import React from "react";
-import { View, Text, FlatList, StyleSheet, Button } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  Button,
+  ActivityIndicator
+} from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import Colors from "../../constants/Colors";
 
@@ -8,6 +15,8 @@ import * as cartActions from "../../store/actions/cart-actions";
 import * as ordersActions from "../../store/actions/orders-actions";
 
 const CartScreen = prop => {
+  const [isLoading, setIsLoading] = useState(false);
+
   //the key "cart" below is from App.js's "const rootReducer"
   //and the key "totalAmount" below is from the initialState under "../reducers/cart"
   const cartTotalAmount = useSelector(state => state.cart.totalAmount);
@@ -29,6 +38,13 @@ const CartScreen = prop => {
   });
   const dispatch = useDispatch();
 
+  const sendOrderHandler = async () => {
+    setIsLoading(true);
+    //reminder: dispatch here returns a promise
+    await dispatch(ordersActions.addOrder(cartItems, cartTotalAmount));
+    setIsLoading(false);
+  };
+
   //the flatList data used (below) is the array defined above.
   //it needs a keyExtractor because there's no key or ID property in the array
   return (
@@ -40,14 +56,16 @@ const CartScreen = prop => {
             ${Math.round(cartTotalAmount.toFixed(2) * 100) / 100}
           </Text>
         </Text>
-        <Button
-          color={Colors.secondary}
-          title="Order Now"
-          disabled={cartItems.length === 0}
-          onPress={() =>
-            dispatch(ordersActions.addOrder(cartItems, cartTotalAmount))
-          }
-        />
+        {isLoading ? (
+          <ActivityIndicator size="small" color={Colors.primary} />
+        ) : (
+          <Button
+            color={Colors.secondary}
+            title="Order Now"
+            disabled={cartItems.length === 0}
+            onPress={sendOrderHandler}
+          />
+        )}
       </View>
       <FlatList
         data={cartItems}

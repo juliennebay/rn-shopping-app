@@ -1,5 +1,6 @@
-import { ADD_ORDER } from "../actions/orders-actions";
+import { ADD_ORDER, SET_ORDERS } from "../actions/orders-actions";
 import Order from "../../models/order";
+import { overflowMenuPressHandlerActionSheet } from "react-navigation-header-buttons";
 
 const initialState = {
   orders: []
@@ -7,6 +8,10 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
+    case SET_ORDERS:
+      return {
+        orders: action.orders
+      };
     case ADD_ORDER:
       //the keys below (action.orderData.itmes) are from ../actions/orders-actions.js
       const newOrder = new Order(

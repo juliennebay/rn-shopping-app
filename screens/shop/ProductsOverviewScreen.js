@@ -18,6 +18,7 @@ import Colors from "../../constants/Colors";
 
 const ProductsOverviewScreen = props => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState();
   //the key "products" in state.products below has to match the key in the rootReducer in App.js
   //and the key "availableProducts" is the key from ../store/reducers/products.
@@ -26,13 +27,15 @@ const ProductsOverviewScreen = props => {
 
   const loadProducts = useCallback(async () => {
     setError(null);
-    setIsLoading(true);
+    setIsRefreshing(true);
+    // setIsLoading(true);
     try {
       await dispatch(productsActions.fetchProducts());
     } catch (error) {
       setError(error.message);
     }
-    setIsLoading(false);
+    // setIsLoading(false);
+    setIsRefreshing(false);
   }, [dispatch, setIsLoading, setError]);
 
   //navigation listener - lecture 204
@@ -49,7 +52,10 @@ const ProductsOverviewScreen = props => {
   }, [loadProducts]);
 
   useEffect(() => {
-    loadProducts();
+    setIsLoading(true);
+    loadProducts().then(() => {
+      setIsLoading(false);
+    });
   }, [dispatch, loadProducts]);
 
   const selectItemHandler = (id, title) => {
@@ -94,6 +100,9 @@ const ProductsOverviewScreen = props => {
 
   return (
     <FlatList
+      //pull to refresh screen
+      onRefresh={loadProducts}
+      refreshing={isRefreshing}
       data={products}
       //the keys below MUST MATCH the keys inside ../../models/product
       renderItem={itemData => (

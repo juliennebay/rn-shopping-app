@@ -23,14 +23,20 @@ export const signup = (email, password) => {
     );
 
     if (!response.ok) {
-      throw new Error("Something went wrong!");
+      const errorResData = await response.json();
+      const errorId = errorResData.error.message;
+      let message = "Something went wrong!";
+      if (errorId === "EMAIL_EXISTS") {
+        message = "An account with that email already exists";
+      }
+      throw new Error(message);
     }
 
     const resData = await response.json();
     //for now, we'll simply log this response data
     console.log(resData);
-
-    dispatch({ type: SIGNUP });
+    //we need the token to access our API
+    dispatch({ type: SIGNUP, token: resData.idToken, userId: resData.localId });
   };
 };
 
@@ -52,13 +58,21 @@ export const login = (email, password) => {
     );
 
     if (!response.ok) {
-      throw new Error("Something went wrong!");
+      const errorResData = await response.json();
+      const errorId = errorResData.error.message;
+      let message = "Something went wrong!";
+      if (errorId === "EMAIL_NOT_FOUND") {
+        message = "We couldn't find an account with that email address";
+      } else if ((errorId = "INVALID_PASSWORD")) {
+        message = "Not a valid password";
+      }
+      throw new Error(message);
     }
 
     const resData = await response.json();
     //for now, we'll simply log this response data
     console.log(resData);
-
-    dispatch({ type: LOGIN });
+    //we need the token to access our API
+    dispatch({ type: LOGIN, token: resData.idToken, userId: resData.localId });
   };
 };

@@ -45,9 +45,11 @@ export const fetchProducts = () => {
 };
 
 export const deleteProduct = productId => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
+    //getState - we can get the redux store
+    const token = getState().auth.token;
     const response = await fetch(
-      `https://rn-shopping-app-69186.firebaseio.com/products/${productId}.json`,
+      `https://rn-shopping-app-69186.firebaseio.com/products/${productId}.json?auth=${token}`,
       {
         method: "DELETE"
       }
@@ -62,12 +64,14 @@ export const deleteProduct = productId => {
 };
 
 export const createProduct = (title, description, imageUrl, price) => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     //you can write any async code you want here (thanks to REDUX THUNK)
     //that URL below is from my Firebase...must add ".json" (that 'products' was added by me - it'll be saved as a seperate folder in firebase )
     //fetch API is built in (in React Native)
+    //getState - we can get the redux store
+    const token = getState().auth.token;
     const response = await fetch(
-      "https://rn-shopping-app-69186.firebaseio.com/products.json",
+      `https://rn-shopping-app-69186.firebaseio.com/products.json?auth=${token}`,
       {
         method: "POST",
         headers: {
@@ -99,9 +103,11 @@ export const createProduct = (title, description, imageUrl, price) => {
 };
 
 export const updateProduct = (id, title, description, imageUrl) => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
+    //getState - we can get the redux store
+    const token = getState().auth.token;
     const response = await fetch(
-      `https://rn-shopping-app-69186.firebaseio.com/products/${id}.json`,
+      `https://rn-shopping-app-69186.firebaseio.com/products/${id}.json?auth=${token}`,
       {
         method: "PATCH",
         headers: {

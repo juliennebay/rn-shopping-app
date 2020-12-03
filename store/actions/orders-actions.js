@@ -38,12 +38,14 @@ export const fetchOrders = () => {
 };
 
 export const addOrder = (cartItems, totalAmount) => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
+    //getState - we can get the redux store
+    const token = getState().auth.token;
     const date = new Date();
     //send a request to store the order on a server (firebase)
     const response = await fetch(
       //orders specific to the user (u1 -- just a dummy username for now)
-      "https://rn-shopping-app-69186.firebaseio.com/orders/u1.json",
+      `https://rn-shopping-app-69186.firebaseio.com/orders/u1.json?auth=${token}`,
       {
         method: "POST",
         headers: {

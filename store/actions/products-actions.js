@@ -7,7 +7,9 @@ export const SET_PRODUCTS = "SET_PRODUCTS";
 //set products has no identifier, because we'll never dispatch it as an action, which will reach a reducer
 
 export const fetchProducts = () => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
+    //getState - we can get the redux store
+    const userId = getState().auth.userId;
     try {
       //you can write any async code you want here (thanks to REDUX THUNK)
       //that URL below is from my Firebase...must add ".json" (that 'products' was added by me - it'll be saved as a seperate folder in firebase )
@@ -36,7 +38,11 @@ export const fetchProducts = () => {
           )
         );
       }
-      dispatch({ type: SET_PRODUCTS, products: loadedProducts });
+      dispatch({
+        type: SET_PRODUCTS,
+        products: loadedProducts,
+        userProducts: loadedProducts.filter(prod => prod.ownerId === userId)
+      });
     } catch (error) {
       //you can do more here, like send to customs analytics server
       throw error;
@@ -70,6 +76,7 @@ export const createProduct = (title, description, imageUrl, price) => {
     //fetch API is built in (in React Native)
     //getState - we can get the redux store
     const token = getState().auth.token;
+    const userId = getState().auth.userId;
     const response = await fetch(
       `https://rn-shopping-app-69186.firebaseio.com/products.json?auth=${token}`,
       {
@@ -81,7 +88,8 @@ export const createProduct = (title, description, imageUrl, price) => {
           title,
           description,
           imageUrl,
-          price
+          price,
+          ownerId: userId
         })
       }
     );
@@ -96,7 +104,8 @@ export const createProduct = (title, description, imageUrl, price) => {
         title,
         description,
         imageUrl,
-        price
+        price,
+        ownerId: userId
       }
     });
   };

@@ -1,5 +1,14 @@
-export const SIGNUP = "SIGNUP";
-export const LOGIN = "LOGIN";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+//AsyncStorage used for "auto login" (so that the user doesn't have to login each time after refreshing page)
+//AsyncStorage should be used to save data to the device, instead of LocalStorage
+
+// export const SIGNUP = "SIGNUP";
+// export const LOGIN = "LOGIN";
+export const AUTHENTICATE = "AUTHENTICATE";
+
+export const authenticate = (userId, token) => {
+  return { type: AUTHENTICATE, userId: userId, token: token };
+};
 
 export const signup = (email, password) => {
   //see official docs (firebase):
@@ -36,7 +45,13 @@ export const signup = (email, password) => {
     //for now, we'll simply log this response data
     console.log(resData);
     //we need the token to access our API
-    dispatch({ type: SIGNUP, token: resData.idToken, userId: resData.localId });
+    // dispatch({ type: SIGNUP, token: resData.idToken, userId: resData.localId });
+    dispatch(authenticate(resData.localId, resData.idToken));
+    //expiresIn - see https://firebase.google.com/docs/reference/rest/auth#section-sign-in-email-password
+    const expirationDate =
+      //multiply by 1000 to convert from seconds to milliseconds
+      new Date(new Date().getTime() + parseInt(resData.expiresIn) * 1000);
+    saveDataToStorage(resData.idToken, resData.localId, expirationDate);
   };
 };
 
@@ -73,6 +88,23 @@ export const login = (email, password) => {
     //for now, we'll simply log this response data
     console.log(resData);
     //we need the token to access our API
-    dispatch({ type: LOGIN, token: resData.idToken, userId: resData.localId });
+    //   dispatch({ type: LOGIN, token: resData.idToken, userId: resData.localId });
+    dispatch(authenticate(resData.localId, resData.idToken));
+    //expiresIn - see https://firebase.google.com/docs/reference/rest/auth#section-sign-in-email-password
+    const expirationDate =
+      //multiply by 1000 to convert from seconds to milliseconds
+      new Date(new Date().getTime() + parseInt(resData.expiresIn) * 1000);
+    saveDataToStorage(resData.idToken, resData.localId, expirationDate);
   };
+};
+
+const saveDataToStorage = (token, userId, expirationDate) => {
+  AsyncStorage.setItem(
+    "userData",
+    JSON.stringify({
+      token: token,
+      userId: userId,
+      expiryDate: expirationDate.toISOString()
+    })
+  );
 };

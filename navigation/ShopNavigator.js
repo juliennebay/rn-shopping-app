@@ -11,6 +11,7 @@ import OrdersScreen from "../screens/shop/OrdersScreen";
 import UserProductsScreen from "../screens/user/UserProductsScreen";
 import EditProductScreen from "../screens/user/EditProductScreen";
 import AuthScreen from "../screens/user/AuthScreen";
+import StartupScreen from "../screens/StartupScreen";
 import Colors from "../constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -98,6 +99,7 @@ const AuthNavigator = createStackNavigator(
 //note: SwitchNavigator doesn't let you go back to the previous screen
 //(which works here, b/c if you just logged in, you shouldn't be able to go back to the login screen)
 const MainNavigator = createSwitchNavigator({
+  Startup: StartupScreen,
   Auth: AuthNavigator,
   Shop: ShopNavigator
 });

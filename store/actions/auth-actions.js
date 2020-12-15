@@ -7,8 +7,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export const AUTHENTICATE = "AUTHENTICATE";
 export const LOGOUT = "LOGOUT";
 
-export const authenticate = (userId, token) => {
-  return { type: AUTHENTICATE, userId: userId, token: token };
+let timer;
+
+export const authenticate = (userId, token, expiryTime) => {
+  return dispatch => {
+    dispatch(setLogoutTimer(expiryTime));
+    dispatch({ type: AUTHENTICATE, userId: userId, token: token });
+  };
 };
 
 export const signup = (email, password) => {
@@ -47,7 +52,13 @@ export const signup = (email, password) => {
     console.log(resData);
     //we need the token to access our API
     // dispatch({ type: SIGNUP, token: resData.idToken, userId: resData.localId });
-    dispatch(authenticate(resData.localId, resData.idToken));
+    dispatch(
+      authenticate(
+        resData.localId,
+        resData.idToken,
+        parseInt(resData.expiresIn) * 1000
+      )
+    );
     //expiresIn - see https://firebase.google.com/docs/reference/rest/auth#section-sign-in-email-password
     const expirationDate =
       //multiply by 1000 to convert from seconds to milliseconds
@@ -90,7 +101,13 @@ export const login = (email, password) => {
     console.log(resData);
     //we need the token to access our API
     //   dispatch({ type: LOGIN, token: resData.idToken, userId: resData.localId });
-    dispatch(authenticate(resData.localId, resData.idToken));
+    dispatch(
+      authenticate(
+        resData.localId,
+        resData.idToken,
+        parseInt(resData.expiresIn) * 1000
+      )
+    );
     //expiresIn - see https://firebase.google.com/docs/reference/rest/auth#section-sign-in-email-password
     const expirationDate =
       //multiply by 1000 to convert from seconds to milliseconds
@@ -99,8 +116,28 @@ export const login = (email, password) => {
   };
 };
 
+//this happens when the time is done (see const setLogoutTime below)
 export const logout = () => {
+  clearLogoutTimer();
+  AsyncStorage.removeItem("userData"); //remove data from our local storage
   return { type: LOGOUT };
+};
+
+const clearLogoutTimer = () => {
+  //react native supports clearTimeout
+  if (timer) {
+    clearTimeout(timer);
+  }
+};
+
+const setLogoutTimer = expirationTime => {
+  //using redux thunk
+  return dispatch => {
+    //react native supports setTimeout
+    timer = setTimeout(() => {
+      dispatch(logout());
+    }, expirationTime);
+  };
 };
 
 const saveDataToStorage = (token, userId, expirationDate) => {

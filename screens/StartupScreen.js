@@ -32,10 +32,12 @@ const StartupScreen = props => {
         props.navigation.navigate("Auth");
         return;
       }
+      //need to calculate the remaining time, because this kicks in whenever we restart the app
+      const expirationTime = expirationDate.getTime() - new Date().getTime();
 
       //if we make it past this point, the user is authenticated & the user needs to be logged in
       props.navigation.navigate("Shop");
-      dispatch(authActions.authenticate(userId, token));
+      dispatch(authActions.authenticate(userId, token, expirationTime));
     };
 
     tryLogin();
